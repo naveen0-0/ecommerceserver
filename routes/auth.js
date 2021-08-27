@@ -54,13 +54,30 @@ router.route('/getuser').get( async (req,res) => {
             const user = await User.findOne({ username : decoded.username })
             return res.send({
                 statusload:true,
-                user:{ username : user.username,email:user.email,loggedIn:true}
+                user:{ username : user.username,email:user.email,loggedIn:true },
             })
         })
     }else{
         res.send({
             statusload:false,
-            user:{ username : "",email:"",loggedIn:false}
+            user:{ username : "",email:"",loggedIn:false},
+        })
+    }
+})
+router.route('/getcart').get( async (req,res) => {
+    const shoplogintoken = req.headers.authorization
+    if(shoplogintoken){
+        jwt.verify(shoplogintoken,process.env.ACCESS_TOKEN,async (err,decoded) => {
+            if(err) return res.send({statusload:false,msg:"error getting the user"})
+            const user = await User.findOne({ username : decoded.username })
+            return res.send({
+                statusload:true,
+                cart:user.cart,
+            })
+        })
+    }else{
+        res.send({
+            statusload:false,
         })
     }
 })
